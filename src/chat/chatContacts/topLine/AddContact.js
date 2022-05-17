@@ -2,15 +2,46 @@ import '../../chat.css'
 import { React, useRef } from 'react';
 import { users } from '../../../Users';
 
-function AddContact(props) {
+
+async function postDataInDB(concat) {
+    // Simple POST request with a JSON body using fetch
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(concat),
+    };
+    const response = await fetch('https://localhost:7271/api/Contacts', requestOptions);
+    const token = await response.text();
+    console.log(token);
+    return token;
+}
+
+
+async function AddContact(props) {
 
     let name = useRef();
+    let nickName = useRef();
+    let server = useRef();
+
+
 
     const addContact = function (event) {
         event.preventDefault();
 
+///////////////////
+
         let contName = name.current.value;
         name.current.value = ''
+
+        let contNickName = nickName.current.value;
+        nickName.current.value = ''
+
+        let contServer = server.current.value;
+        server.current.value = ''
+
+        //const stat = await postDataInDB({ id: contName, name: contNickName, server: contServer});
+
+////////////////
 
         let indexOfUserInArrey= users.findIndex(x => (x.userName === contName))
 
@@ -26,7 +57,6 @@ function AddContact(props) {
             alert("it is You :(")
         }
         
-    
         else{
         props.setContact((prev)=>{
             return prev.concat({userName: contName, nickName:users[indexOfUserInArrey].nickName , image: users[indexOfUserInArrey].image, messages:[]})
@@ -56,6 +86,14 @@ function AddContact(props) {
                                 <div className="mb-3">
                                     <label htmlFor="recipient-name" className="col-form-label">Enter User Name</label>
                                     <input type="text" className="form-control" id="recipient-name" ref={name}></input>
+
+                                    <label htmlFor="recipient-nick-name" className="col-form-label">Enter Nick Name</label>
+                                    <input type="text" className="form-control" id="recipient-nick-name" ref={nickName}></input>
+
+                                    <label htmlFor="recipient-server" className="col-form-label">Enter Server</label>
+                                    <input type="text" className="form-control" id="recipient-server" ref={server}></input>
+
+
                                     <button type="submit" id="btn" className=" btn btn_start btn-primary" data-bs-dismiss="modal" onClick={addContact} > Add</button>
                                 </div>
                             </form>
