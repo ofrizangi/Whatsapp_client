@@ -13,7 +13,6 @@ function Register() {
     const [nickName, setNickName] = useState("");
     const [image, setImage] = useState(avatar);
     const [password, setPassword] = useState("");
-    const [token, setToken] = useState("");
     const navigate = useNavigate();
 
     async function postDataInDB(user) {
@@ -67,9 +66,9 @@ function Register() {
                 //console.log('false')
             }
             else{
-                console.log('sucsees')
-                setToken(stat)
-                //navigate('/chats',  { state:{index:users.length - 1}});
+                console.log(stat)
+                users.push({ userName: userName, nickName: nickName, image: image, password: password, contacts: [] });
+                navigate('/chats',  { state:{index:users.length - 1, token: stat}});
             }
         }
     }

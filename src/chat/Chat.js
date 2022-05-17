@@ -13,7 +13,8 @@ function Chat() {
 
 
   const { state } = useLocation();
-  let user = users[state.index];
+  const { index, token } = state;
+  let user = users[index];
   let [contact, setContact] = useState(user.contacts);
   const [messages, setMessage] = useState([])
   const [userChatPrassed, setUserChatPrassed] = useState(null);
@@ -41,7 +42,10 @@ function Chat() {
       <div className="row">
 
         <div className="col-4" id="leftMenu">
-        <UserProfile setContact={setContact} userName={user.nickName} existContacts={user.contacts}  indexOfMe = {state.index} image ={user.image}/>
+          {console.log(token)}
+          {console.log(token)}
+
+        <UserProfile setContact={setContact} userName={user.nickName} existContacts={user.contacts}  indexOfMe = {state.index} image ={user.image} token={token}/>
 
           <div className="scroll">
             {<ChatList contacts={contact} setUser={setUserChatPrassed} setMessages = {setMessage}/>}
