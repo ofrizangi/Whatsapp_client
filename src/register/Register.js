@@ -13,60 +13,22 @@ function Register() {
     const [nickName, setNickName] = useState("");
     const [image, setImage] = useState(avatar);
     const [password, setPassword] = useState("");
+    const [token, setToken] = useState("");
     const navigate = useNavigate();
 
-
-
-
-    // useEffect(()=>{
-
-    //     const fetchData = async()=>{
-    //         await fetch('https://localhost:7271/WeatherForecast', {
-    //             method: "POST",
-    //             body: JSON.stringify(_data),
-    //             headers: { 'accept': 'application/json'}
-    //         })
-    //     }
-
-
-    // } , [user])
-
-    useEffect (() => {
-        fetch(  'https://localhost:7271/api/User/Get')
-        .then(response => response.text())
-        .then(data => console.log(data));
-        // async function fetchData(){
-        //     const res = await fetch("https://localhost:7271/WheatherForecast", {
-        //         headers: {mode: "cors"}  
-        //     });
-        //     const data = await res.json;
-        // }
-    }, [])
-
-     const fetchData = ()=>{
-            fetch('https://localhost:7271/api/User/Register', {
-                method: "POST",
-                body: JSON.stringify("data"),
-                headers: { 'accept': 'application/json'}
-            })
-
-        }
-
-
-        function postDataInDB(user) {
-            // Simple POST request with a JSON body using fetch
-            const requestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(user),
-            };
-            fetch('https://localhost:7271/api/User/Register', requestOptions);
-        }
+    async function postDataInDB(user) {
+        // Simple POST request with a JSON body using fetch
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(user),
+        };
+        const response = await fetch('https://localhost:7271/api/User/Register', requestOptions);
+        const token = await response.text();
+        console.log(token);
+        return token;
+    }
     
-
-
-
-
 
     const checkPass2 = function () {
         var pass = document.getElementById('Password').value
@@ -85,40 +47,30 @@ function Register() {
         }
     }
 
-
-
-    const UserNameExist = function(){
-        for (let i = 0; i < users.length; i++) {
-            if (users[i].userName === userName) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-
-    const checkIfValidAndSubmit = function (event) {
+    async function checkIfValidAndSubmit(event) {
         event.preventDefault();
         var checkPass = document.getElementById('checkPass').value;
-
+        
         if (!checkPass2()) {
             alert('Password is not valid');
         }
         else if (password !== checkPass) {
             alert('Password is not matching');
         }
-        else if(UserNameExist() || userName === ''){
-            alert('This user name is not valid or already exists, chose a different one');
-        }
         else {
             if (nickName === '')
-                users.push({ userName: userName, nickName: userName, image: image, password: password, contacts: [] });
-            else
-                users.push({ userName: userName, nickName: nickName, image: image, password: password, contacts: [] });
-            // setUser({ userName: userName, nickName: nickName, image: image, password: password});    
-            // fetchData();
-            postDataInDB({ userName: userName, password: password, nickName: nickName,  image: image, contacts: [] });
-            navigate('/chats',  { state:{index:users.length - 1}});
+                setNickName(userName);
+            const stat = await postDataInDB({ userName: userName, password: password, nickName: nickName,  image: image, contacts: [] });
+            console.log(stat)
+            if (stat === "false" || userName === '') {
+                alert('This user name is not valid or already exists, chose a different one');
+                //console.log('false')
+            }
+            else{
+                console.log('sucsees')
+                setToken(stat)
+                //navigate('/chats',  { state:{index:users.length - 1}});
+            }
         }
     }
 

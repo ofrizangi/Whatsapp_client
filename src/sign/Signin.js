@@ -1,14 +1,18 @@
 import { Link, useNavigate } from 'react-router-dom'
-import { React, useState } from 'react';
+import { React, useState, useEffect } from 'react';
 import {  users } from '../Users';
 import logo from '../wenLogo.jpg'
 import './sign.css'
 import '../project.css'
 
 function Signin() {
+
+
+
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
+    const [token, setToken] = useState("");
 
 
     async function serverSignIn(user) {
@@ -17,35 +21,51 @@ function Signin() {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(user),
-        };
-        const respone = await fetch('https://localhost:7271/api/User/Login', requestOptions);
-        const data = await respone.json();
-        console.log(data);
-        return data;
+        }
+        const response = await fetch('https://localhost:7271/api/User/Login', requestOptions);
+        
+        const token = await response.text();
+        // var token = awiat(JSON.parse(response)).access_token; 
+        return token;
     }
 
-    
-    const goToChatPage = (event) => {
+    async function goToChatPage(event) {
         event.preventDefault();
-        let transfer = false;
-        const stat = serverSignIn({userName: userName, password: password});
-        // if(stat === 200){
-        //     navigate('/chats', { state:{index:i}});
-        // }
-        // else{
-        //     alert('user name or password are incorrect')
+        
+        const token = await serverSignIn({userName: userName, password:password})
 
-        // }
-
-        for (let i = 0; i < users.length; i++) {
-            if (users[i].userName === userName && users[i].password === password) {
-
-                navigate('/chats', { state:{index:i}});
-                transfer = true
-            }
-        }
-        if (!transfer)
+        // delete me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        console.log(token);
+        const requestOptions = {
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + token },
+        };
+        fetch('https://localhost:7271/api/User/Get', requestOptions)
+        .then(response => response.text())
+        .then(data => console.log(data));
+        
+        
+        if (token === "false") {
             alert('user name or password are incorrect')
+        }
+        else {
+            //navigate('/chats', { state:{index:i}});
+            setToken(token)
+        }
+         
+     
+        // let transfer = false;
+
+
+        // for (let i = 0; i < users.length; i++) {
+        //     if (users[i].userName === userName && users[i].password === password) {
+
+        //         navigate('/chats', { state:{index:i}});
+        //         transfer = true
+        //     }
+        // }
+        // if (!transfer)
+        //     alert('user name or password are incorrect')
     }
 
 
