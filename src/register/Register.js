@@ -60,6 +60,7 @@ function Register() {
             if (nickName === '')
                 setNickName(userName);
             const stat = await postDataInDB({ userName: userName, password: password, nickName: nickName,  image: image, contacts: [] });
+
             console.log(stat)
             if (stat === "false" || userName === '') {
                 alert('This user name is not valid or already exists, chose a different one');

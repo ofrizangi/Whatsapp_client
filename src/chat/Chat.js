@@ -48,7 +48,7 @@ function Chat() {
         <UserProfile setContact={setContact} userName={user.nickName} existContacts={user.contacts}  indexOfMe = {state.index} image ={user.image} token={token}/>
 
           <div className="scroll">
-            {<ChatList contacts={contact} setUser={setUserChatPrassed} setMessages = {setMessage}/>}
+            {<ChatList contacts={contact} setUser={setUserChatPrassed} setMessages = {setMessage} token={token}/>}
           </div>
         </div>  
         <div className="col-8" id="chats">
@@ -60,7 +60,7 @@ function Chat() {
       </div>
       <div>   
 
-        {userChatPrassed !== null && <SendMessage arrContactMessage={getArrOfUserContact()} setMessage={setMessage} myUser={user.nickName} chatUser={userChatPrassed.userName} arrContact={contact} />}
+        {userChatPrassed !== null && <SendMessage arrContactMessage={getArrOfUserContact()} setMessage={setMessage} myUser={user.nickName} chatUser={userChatPrassed.userName} arrContact={contact} token={token}/>}
         </div>
         </div>
       </div>

@@ -13,7 +13,25 @@ function SendMessage(props) {
       setNewMessage("text", mes)}
   }
 
-  const setNewMessage = function (type, mes) {
+
+  async function sendMessageToDB(message,token,contactName) {
+    // Simple POST request with a JSON body using fetch
+    const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token  },
+        body: JSON.stringify(message),
+    };
+    var url = 'https://localhost:7271/api/contacts/' + contactName + '/' + 'messages'
+    //var url = 'https://localhost:7271/api/messages'
+    const response = await fetch(url, requestOptions);
+    //const stat = await response.text();
+    //console.log(stat)
+  
+}
+
+  const setNewMessage = async function (type, mes) {
+    await sendMessageToDB({Content: mes}, props.token, props.chatUser);
     let index1 = props.arrContact.findIndex(x => (x.userName === props.chatUser))
     const currentTimeSatmp = new Date()
     props.arrContact[index1].messages = [...props.arrContact[index1].messages, { message: mes, sentByMe: true, type: type, date:currentTimeSatmp }]

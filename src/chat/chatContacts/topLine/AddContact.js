@@ -110,9 +110,9 @@ async function sendContactToDB(contact, token) {
         body: JSON.stringify(contact),
     };
     const response = await fetch('https://localhost:7271/api/contacts', requestOptions);
-    // const token = await response.text();
-    // console.log(token);
-    // return token;
+    const stat = await response.text();
+    console.log(stat)
+    return stat;
 }
 
 function AddContact(props) {
@@ -121,13 +121,33 @@ function AddContact(props) {
     let nickName = useRef();
     let server = useRef();
 
-    const addContact = function (event) {
+
+
+    async function addContact(event) {
         event.preventDefault();
 
-        sendContactToDB({id: name.current.value, name: nickName.current.value, server: server.current.value}, props.token);
+        let stat = await sendContactToDB({id: name.current.value, name: nickName.current.value, server: server.current.value}, props.token);
 
-        let contName = name.current.value;
-        name.current.value = ''
+         let contName = name.current.value;
+         name.current.value = ''
+         nickName.current.value = ''
+         server.current.value = ''
+
+
+         if (stat == "true")
+            console.log("adeed")
+        else
+            console.log("This user is not valid")
+
+//להוסיף AWAIT
+        const requestOptions = {
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + props.token },
+        };
+        fetch('https://localhost:7271/api/contacts', requestOptions)
+        .then(response => response.text())
+        .then(data => console.log(data));
+///////
 
         let indexOfUserInArrey= users.findIndex(x => (x.userName === contName))
 
