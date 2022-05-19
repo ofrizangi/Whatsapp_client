@@ -32,6 +32,42 @@ function SendMessage(props) {
 
   const setNewMessage = async function (type, mes) {
     await sendMessageToDB({Content: mes}, props.token, props.chatUser);
+    const requestOptions = {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + props.token },
+    };
+    var url = 'https://localhost:7271/api/contacts/' + props.chatUser + '/' + 'messages'
+    fetch(url, requestOptions)
+    .then(response => response.text())
+    .then(data => console.log(data));
+
+    var url = 'https://localhost:7271/api/contacts/' + props.chatUser + '/' + 'messages/58'
+    fetch(url, requestOptions)
+    .then(response => response.text())
+    .then(data => console.log(data));
+
+    const requestOptions3 = {
+      method: 'DELETE',
+      headers: { 'Authorization': 'Bearer ' + props.token },
+  };
+    var url = 'https://localhost:7271/api/contacts/' + props.chatUser + '/' + 'messages/61'
+    fetch(url, requestOptions3)
+    .then(response => response.text())
+    .then(data => console.log(data));
+
+
+    const requestOptions4 = {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + props.token },
+  };
+    var url = 'https://localhost:7271/api/contacts/' + props.chatUser + '/' + 'messages/80'
+    fetch(url, requestOptions4)
+    .then(response => response.text())
+    .then(data => console.log(data));
+
+
+
+
     let index1 = props.arrContact.findIndex(x => (x.userName === props.chatUser))
     const currentTimeSatmp = new Date()
     props.arrContact[index1].messages = [...props.arrContact[index1].messages, { message: mes, sentByMe: true, type: type, date:currentTimeSatmp }]
