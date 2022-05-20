@@ -12,10 +12,66 @@ function ChatItem(props) {
       });
     
 
-    const goToMethod = function(){
+    function goToMethod(){
+
+        // editContact({name: "vbvnbvnbvnbv" , server: "localhost:7271"});
+        // deleteContact();
+        
+
         props.setMessages(props.contact.messages);
         props.setUser({userName: props.contact.userName,nickName:props.contact.nickName, image: props.contact.image, messages: props.contact.messages});
     }
+
+    async function showContact(){
+        const requestOptions = {
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + props.token},
+        };
+        const url = 'https://localhost:7271/api/contacts/' + props.contact.UserName;
+        const response = await fetch(url, requestOptions);
+        const stat = await response.json();
+        console.log(stat)
+        console.log(stat.id)
+    }
+
+
+
+    async function deleteContact(){
+
+        const requestOptions = {
+            method: 'DELETE',
+            headers: { 'Authorization': 'Bearer ' + props.token},
+        };
+        const url = 'https://localhost:7271/api/contacts/' + props.contact.UserName;
+        const response = await fetch(url, requestOptions);
+
+        // status 200 if succeed and 400 oterwise
+        const stat = response.status;
+        console.log(stat)
+    }
+
+
+    async function editContact(editdetails){
+        console.log(JSON.stringify(editdetails))
+
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + props.token},
+            body: JSON.stringify(editdetails),
+        };
+        const url = 'https://localhost:7271/api/contacts/' + props.contact.UserName;
+        const response = await fetch(url, requestOptions);
+
+        // status 200 if succeed and 400 oterwise
+        const stat = response.status;
+        console.log(stat)
+    }
+
+
+
+
+    
 
     const SECOND = 1000,
     MINUTE = SECOND * 60,

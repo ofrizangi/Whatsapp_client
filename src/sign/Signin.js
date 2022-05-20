@@ -45,27 +45,26 @@ function Signin() {
         .then(data => console.log(data));
         
         
-        if (token === "false") {
-            alert('user name or password are incorrect')
-        }
-        else {
-            //navigate('/chats', { state:{index:i}});
-            setToken(token)
-        }
+        // if (token === "false") {
+        //     alert('user name or password are incorrect')
+        // }
+        // else {
+        //     //navigate('/chats', { state:{index:i}});
+        //     setToken(token)
+        // }
          
      
-        // let transfer = false;
+        let transfer = false;
 
+        for (let i = 0; i < users.length; i++) {
+            if (users[i].userName === userName && users[i].password === password) {
 
-        // for (let i = 0; i < users.length; i++) {
-        //     if (users[i].userName === userName && users[i].password === password) {
-
-        //         navigate('/chats', { state:{index:i}});
-        //         transfer = true
-        //     }
-        // }
-        // if (!transfer)
-        //     alert('user name or password are incorrect')
+                navigate('/chats', { state:{index:i, token:token}});
+                transfer = true
+            }
+        }
+        if (!transfer)
+            alert('user name or password are incorrect')
     }
 
 

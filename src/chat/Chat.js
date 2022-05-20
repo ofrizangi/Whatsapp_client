@@ -13,9 +13,17 @@ function Chat() {
 
 
   const { state } = useLocation();
-  const { index, token } = state;
+  const { index, token, userName } = state;
   let user = users[index];
+
+  // insted of sending the contact array we will send a vulaue of true or false so we will now when we addead a contact and
+  // have to present the list again
   let [contact, setContact] = useState(user.contacts);
+  const [addedContact, setAddedContact] = useState(false);
+
+
+
+
   const [messages, setMessage] = useState([])
   const [userChatPrassed, setUserChatPrassed] = useState(null);
 
@@ -45,7 +53,7 @@ function Chat() {
           {console.log(token)}
           {console.log(token)}
 
-        <UserProfile setContact={setContact} userName={user.nickName} existContacts={user.contacts}  indexOfMe = {state.index} image ={user.image} token={token}/>
+        <UserProfile setContact={setContact} userName={user.nickName} existContacts={user.contacts}  indexOfMe = {state.index} image ={user.image} token={token} user={user.userName}/>
 
           <div className="scroll">
             {<ChatList contacts={contact} setUser={setUserChatPrassed} setMessages = {setMessage} token={token}/>}
