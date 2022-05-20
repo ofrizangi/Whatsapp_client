@@ -48,8 +48,8 @@ function Register() {
 
     async function checkIfValidAndSubmit(event) {
         event.preventDefault();
+
         var checkPass = document.getElementById('checkPass').value;
-        
         if (!checkPass2()) {
             alert('Password is not valid');
         }
@@ -57,9 +57,13 @@ function Register() {
             alert('Password is not matching');
         }
         else {
+            let stat;
             if (nickName === '')
-                setNickName(userName);
-            const stat = await postDataInDB({ userName: userName, password: password, nickName: nickName,  image: image, contacts: [] });
+                stat = await postDataInDB({ userName: userName, password: password, nickName: userName,  image: image, contacts: [] });
+            else 
+                stat = await postDataInDB({ userName: userName, password: password, nickName: nickName,  image: image, contacts: [] });
+
+
 
             console.log(stat)
             if (stat === "false" || userName === '') {
@@ -68,8 +72,7 @@ function Register() {
             }
             else{
                 console.log(stat)
-                users.push({ userName: userName, nickName: nickName, image: image, password: password, contacts: [] });
-                navigate('/chats',  { state:{index:users.length - 1, token: stat}});
+                navigate('/chats',  { state:{ token: stat, userName:userName}});
             }
         }
     }

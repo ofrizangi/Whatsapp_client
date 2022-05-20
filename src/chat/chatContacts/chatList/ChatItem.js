@@ -1,5 +1,6 @@
 import '../../chat.css'
 import { useState, useEffect } from 'react';
+import avatar from './avatar.png' 
 
 function ChatItem(props) {
 
@@ -10,28 +11,56 @@ function ChatItem(props) {
           setDate(new Date());
         }, 30000);
       });
-    
 
-    function goToMethod(){
+
+    async function goToMethod(){
 
         // editContact({name: "vbvnbvnbvnbv" , server: "localhost:7271"});
         // deleteContact();
+        const contact = await showContact();
+        // console.log(cont)
+        if(contact != false){
+            props.setUser({userName: contact.id ,nickName:contact.name, image: avatar});
+        }
         
+        const messages = await getAllContactMessages();
+        console.log(messages)
+        // let newMessages = []
+        // messages.map((item)=>{
+        //     newMessages.concat({ content: item.content , created: item.created, sent: item.sent})
+        // })
+        // console.log(newMessages)
+        props.setMessages(messages);
 
-        props.setMessages(props.contact.messages);
-        props.setUser({userName: props.contact.userName,nickName:props.contact.nickName, image: props.contact.image, messages: props.contact.messages});
+    }
+
+
+    async function getAllContactMessages(){
+
+        const requestOptions = {
+            method: 'GET',
+            headers: { 'Authorization': 'Bearer ' + props.token },
+          };
+          var url = 'https://localhost:7271/api/contacts/' + props.contact.id + '/' + 'messages'
+          const response = await fetch(url, requestOptions);
+          const messageList = await response.json();
+          return messageList;
     }
 
     async function showContact(){
+        // console.log(props.token)
         const requestOptions = {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + props.token},
         };
-        const url = 'https://localhost:7271/api/contacts/' + props.contact.UserName;
+        const url = 'https://localhost:7271/api/contacts/' + props.contact.id;
         const response = await fetch(url, requestOptions);
-        const stat = await response.json();
-        console.log(stat)
-        console.log(stat.id)
+        if(response.status < 300){
+            const stat = await response.json();
+            return stat;
+        }
+        return false;
+         
     }
 
 
@@ -42,7 +71,7 @@ function ChatItem(props) {
             method: 'DELETE',
             headers: { 'Authorization': 'Bearer ' + props.token},
         };
-        const url = 'https://localhost:7271/api/contacts/' + props.contact.UserName;
+        const url = 'https://localhost:7271/api/contacts/' + props.contact.id;
         const response = await fetch(url, requestOptions);
 
         // status 200 if succeed and 400 oterwise
@@ -68,10 +97,6 @@ function ChatItem(props) {
         console.log(stat)
     }
 
-
-
-
-    
 
     const SECOND = 1000,
     MINUTE = SECOND * 60,
@@ -110,22 +135,26 @@ const getTimeAgoString = (timestamp) => {
         
       
             <button type="button" className="list-group-item list-group-item-action d-flex align-items-center" onClick={goToMethod}>
-            <img src={props.contact.image} alt="Avatar" className="avatar"></img>
+            <img src={avatar} alt="Avatar" className="avatar"></img>
             
             <span className="m-2 ms-3 nameContact" >
-                <div className='chat-name'>{props.contact.nickName}</div>
+                <div className='chat-name'>{props.contact.name}</div>
                 <div className='last-message'>
-                {props.contact.messages.length !== 0 && props.contact.messages[props.contact.messages.length-1].type === 'text' && <div>{ props.contact.messages[props.contact.messages.length-1].message}</div>} 
+                {/* {props.contact.messages.length !== 0 && props.contact.messages[props.contact.messages.length-1].type === 'text' && <div>{ props.contact.messages[props.contact.messages.length-1].message}</div>} 
                 {props.contact.messages.length !== 0 && props.contact.messages[props.contact.messages.length-1].type === 'image' && <div> <i className="bi bi-image"></i> image</div>}
                 {props.contact.messages.length !== 0 && props.contact.messages[props.contact.messages.length-1].type === 'video' && <div> <i className="bi bi-camera-video"></i> video</div>}
                 {props.contact.messages.length !== 0 && props.contact.messages[props.contact.messages.length-1].type === 'audio' && <div> <i className="bi bi-mic"></i> audio</div>}
-                {props.contact.messages.length !== 0 && props.contact.messages[props.contact.messages.length-1].type === 'file' && <div> <i className="bi bi-filetype-pdf"></i> file</div>}
+                {props.contact.messages.length !== 0 && props.contact.messages[props.contact.messages.length-1].type === 'file' && <div> <i className="bi bi-filetype-pdf"></i> file</div>} */}
+
+                {props.contact.last != null && <div>{props.contact.last}</div>}
                 </div>
             
             </span> 
             
-            <span className='time-ago'> {props.contact.messages.length !== 0  && getTimeAgoString(props.contact.messages[props.contact.messages.length-1].date)}   </span>
-      
+            {/* <span className='time-ago'> {props.contact.messages.length !== 0  && getTimeAgoString(props.contact.messages[props.contact.messages.length-1].date)}   </span> */}
+
+            <span className='time-ago'> {props.contact.lastdate != null  && getTimeAgoString(new Date(props.contact.lastdate))}   </span>
+
             </button>
 
     );

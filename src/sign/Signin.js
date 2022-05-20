@@ -12,7 +12,6 @@ function Signin() {
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
-    const [token, setToken] = useState("");
 
 
     async function serverSignIn(user) {
@@ -34,37 +33,36 @@ function Signin() {
         
         const token = await serverSignIn({userName: userName, password:password})
 
-        // delete me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        console.log(token);
-        const requestOptions = {
-            method: 'GET',
-            headers: { 'Authorization': 'Bearer ' + token },
-        };
-        fetch('https://localhost:7271/api/User/Get', requestOptions)
-        .then(response => response.text())
-        .then(data => console.log(data));
-        
-        
-        // if (token === "false") {
-        //     alert('user name or password are incorrect')
-        // }
-        // else {
-        //     //navigate('/chats', { state:{index:i}});
-        //     setToken(token)
-        // }
+
+        if (token === "false") {
+            alert('user name or password are incorrect')
+        }
+        else {
+            navigate('/chats', { state:{token:token, userName: userName}});
+        }
+
+             // delete me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // console.log(token);
+        // const requestOptions = {
+        //     method: 'GET',
+        //     headers: { 'Authorization': 'Bearer ' + token },
+        // };
+        // fetch('https://localhost:7271/api/User/Get', requestOptions)
+        // .then(response => response.text())
+        // .then(data => console.log(data));
          
      
-        let transfer = false;
+        // let transfer = false;
 
-        for (let i = 0; i < users.length; i++) {
-            if (users[i].userName === userName && users[i].password === password) {
+        // for (let i = 0; i < users.length; i++) {
+        //     if (users[i].userName === userName && users[i].password === password) {
 
-                navigate('/chats', { state:{index:i, token:token}});
-                transfer = true
-            }
-        }
-        if (!transfer)
-            alert('user name or password are incorrect')
+        //         navigate('/chats', { state:{index:i, token:token, userName:userName}});
+        //         transfer = true
+        //     }
+        // }
+        // if (!transfer)
+        //     alert('user name or password are incorrect')
     }
 
 
