@@ -14,7 +14,7 @@ function SendMessage(props) {
   }
 
 
-  async function sendMessageToDB(message,token,contactName) {
+async function sendMessageToDB(message,token,contactName) {
     // Simple POST request with a JSON body using fetch
     const requestOptions = {
         method: 'POST',
@@ -27,11 +27,81 @@ function SendMessage(props) {
     const response = await fetch(url, requestOptions);
     //const stat = await response.text();
     //console.log(stat)
-  
 }
 
-  const setNewMessage = async function (type, mes) {
+async function getServerContact(contact) {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Authorization': 'Bearer ' + props.token },
+};
+var url = 'https://localhost:7271/api/contacts/' + contact
+const response = await fetch(url, requestOptions);
+const stat = await response.text();
+console.log(stat)
+return stat;
+}
+
+
+
+async function sendMessageToDBofContact(message) {
+  //אני רוצה לקבל את השרת של האיש קשר אליו אני שולחת את ההודעה
+  var serverContact = getServerContact(message.To)
+  const requestOptions1 = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + props.token  },
+    body: JSON.stringify(message),
+};
+var url = 'https://' + serverContact + '/api/Transfer'
+const response1 = await fetch(url, requestOptions1);
+}
+
+const Api = async function () {
+  const requestOptions = {
+    method: 'GET',
+    headers: { 'Authorization': 'Bearer ' + props.token },
+};
+var url = 'https://localhost:7271/api/contacts/' + props.chatUser + '/' + 'messages'
+fetch(url, requestOptions)
+.then(response => response.text())
+.then(data => console.log(data));
+
+var url = 'https://localhost:7271/api/contacts/' + props.chatUser + '/' + 'messages/58'
+fetch(url, requestOptions)
+.then(response => response.text())
+.then(data => console.log(data));
+
+const requestOptions3 = {
+  method: 'DELETE',
+  headers: { 'Authorization': 'Bearer ' + props.token },
+};
+var url = 'https://localhost:7271/api/contacts/' + props.chatUser + '/' + 'messages/61'
+fetch(url, requestOptions3)
+.then(response => response.text())
+.then(data => console.log(data));
+
+
+const requestOptions4 = {
+  method: 'PUT',
+  headers: { 'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + props.token  },
+  body: JSON.stringify({Content: "hiiii is good"}),
+};
+var url = 'https://localhost:7271/api/contacts/' + props.chatUser + '/' + 'messages/104'
+fetch(url, requestOptions4)
+.then(response => response.text())
+.then(data => console.log(data));
+}
+
+const setNewMessage = async function (type, mes) {
     await sendMessageToDB({Content: mes}, props.token, props.chatUser);
+    await sendMessageToDBofContact({From: "mes", To:"" , Content: mes});
+
+    
+
+
+
+
     let index1 = props.arrContact.findIndex(x => (x.userName === props.chatUser))
     const currentTimeSatmp = new Date()
     props.arrContact[index1].messages = [...props.arrContact[index1].messages, { message: mes, sentByMe: true, type: type, date:currentTimeSatmp }]
@@ -40,14 +110,14 @@ function SendMessage(props) {
     props.setMessage((prev) => {
       return prev.concat({ message: mes2, sentByMe: true, type: type, date:currentTimeSatmp })
     })
-  }
+}
 
 
 
-  const checkIfEnter = function (event) {
+const checkIfEnter = function (event) {
     if (event.key === 'Enter')
     uploadText("text")
-  }
+}
 
 
   return (
