@@ -65,7 +65,7 @@ function SendMessage(props) {
           connection.start()
               .then(result => {
                   console.log('Connected!');
-                  
+                  connection.invoke("registerConId", props.myUser)
                   connection.on('ReceiveMessage', message => {
                     set(message)
                   });
@@ -75,14 +75,13 @@ function SendMessage(props) {
   }, [connection]);
 
   const sendMessageSignalIR = async (transfer) => {
-    connection.invoke("registerConId", props.myUser, props.chatUser)
       connection.invoke("SendMessage", transfer)
   }
 
   async function set(message){
-    console.log(message)
-    const messages = await getAllContactMessages();
-    console.log(messages)
+    console.log("set:" , message)
+    const messages = await getAllContactMessages(message.from);
+    console.log("set:", messages)
     props.setMessage(messages)
     await setContacts();
   }
@@ -151,16 +150,17 @@ async function sendMessageToDBofContact(message) {
   return response1.status;
 }
 
-async function getAllContactMessages(){
-  console.log("in")
+async function getAllContactMessages(contact){
+  //console.log("in")
   const requestOptions = {
       method: 'GET',
       headers: { 'Authorization': 'Bearer ' + props.token },
     };
-    var url = 'https://localhost:7271/api/contacts/' + props.chatUser + '/' + 'messages'
+    var url = 'https://localhost:7271/api/contacts/' + contact + '/' + 'messages'
+    //console.log("1", contact)
     const response = await fetch(url, requestOptions);
     const messageList = await response.json();
-    console.log(messageList)
+    //console.log(messageList)
     return messageList;
 }
 
@@ -186,14 +186,7 @@ const setNewMessage = async function (type, mes) {
       sendMessageSignalIR(transfer)
     }
 
-    // let index1 = props.arrContact.findIndex(x => (x.userName === props.chatUser))
-    // const currentTimeSatmp = new Date()
-    // props.arrContact[index1].messages = [...props.arrContact[index1].messages, { message: mes, sentByMe: true, type: type, date:currentTimeSatmp }]
-    // props.arrContactMessage.messages = [...props.arrContactMessage.messages, { message: mes, sentByMe: false, type: type, date:currentTimeSatmp }]
-    // props.setMessage((prev) => {
-    //   return prev.concat({ message: mes2, sent: true, date:currentTimeSatmp })
-    // })
-    const messages = await getAllContactMessages();
+    const messages = await getAllContactMessages(props.chatUser);
     props.setMessage(messages)
     await setContacts();
 }
