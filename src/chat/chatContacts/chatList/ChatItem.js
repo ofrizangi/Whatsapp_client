@@ -105,14 +105,38 @@ function ChatItem(props) {
     MONTH = DAY * 30,
     YEAR = DAY * 365;
 
-const getTimeAgoString = (timestamp) => {
-    const differance = date - timestamp,
+    function convertFromStringToDate(responseDate) {
+        let dateComponents = responseDate.split(' ');
+        let datePieces = dateComponents[0].split("/");
+        let timePieces = dateComponents[1].split(":");
+        let date = new Date(datePieces[2], (datePieces[1] - 1), datePieces[0],
+                             timePieces[0], timePieces[1], timePieces[2]);
+        console.log(date);
+        getTimeAgoString(date);
+    }
+    
+
+
+const getTimeAgoString = (responseDate) => {
+    let dateComponents = responseDate.split(' ');
+    let datePieces = dateComponents[0].split("/");
+    let timePieces = dateComponents[1].split(":");
+    let dateLastMessage = new Date(datePieces[2], (datePieces[1] - 1), datePieces[0],
+                         timePieces[0], timePieces[1], timePieces[2]);
+    console.log(date);
+    const differance = date - dateLastMessage,
         getTimeString = (value, unit) => {
             const round = Math.round(differance / value);
             return `${round} ${unit}${round > 1
                 ? 's'
                 : ''} ago`;
         };
+        // console.log("hiii")
+        // console.log(new Date (new Date(props.contact.lastdate).toDateString()))
+        // console.log( Date.parse(props.contact.lastdate))
+        // console.log("hiii")
+        // console.log(new Date(props.contact.lastdate))
+        // console.log(props.contact.lastdate)
     if (differance < MINUTE) {
         return 'now';
     }
@@ -153,7 +177,8 @@ const getTimeAgoString = (timestamp) => {
             
             {/* <span className='time-ago'> {props.contact.messages.length !== 0  && getTimeAgoString(props.contact.messages[props.contact.messages.length-1].date)}   </span> */}
 
-            <span className='time-ago'> {props.contact.lastdate != null  && getTimeAgoString(new Date(props.contact.lastdate))}   </span>
+            <span className='time-ago'> {props.contact.lastdate != null  && getTimeAgoString(props.contact.lastdate)}   </span>
+    
 
             </button>
 
