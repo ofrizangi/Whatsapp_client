@@ -75,6 +75,7 @@ function SendMessage(props) {
   }, [connection]);
 
   const sendMessageSignalIR = async (transfer) => {
+    connection.invoke("registerConId", props.myUser, props.chatUser)
       connection.invoke("SendMessage", transfer)
   }
 
