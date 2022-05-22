@@ -1,6 +1,7 @@
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import '../chat.css'
 import WindowPop from '../attachItem/WindowPop';
+import { HubConnectionBuilder } from '@microsoft/signalr';
 
 function SendMessage(props) {
 
@@ -43,6 +44,57 @@ function SendMessage(props) {
 
 
 
+
+  const [ connection, setConnection ] = useState(null);
+  const [ chat, setChat ] = useState([]);
+  const latestChat = useRef(null);
+
+  latestChat.current = chat;
+
+  useEffect(() => {
+      const newConnection = new HubConnectionBuilder()
+          .withUrl('https://localhost:7271/hubs/chat')
+          .withAutomaticReconnect()
+          .build();
+
+      setConnection(newConnection);
+  }, []);
+
+  useEffect(() => {
+      if (connection) {
+          connection.start()
+              .then(result => {
+                  console.log('Connected!');
+                  
+                  connection.on('ReceiveMessage', message => {
+                    set(message)
+                  });
+              })
+              .catch(e => console.log('Connection failed: ', e));
+      }
+  }, [connection]);
+
+  const sendMessageSignalIR = async (transfer) => {
+      connection.invoke("SendMessage", transfer)
+  }
+
+  async function set(message){
+    console.log(message)
+    const messages = await getAllContactMessages();
+    console.log(messages)
+    props.setMessage(messages)
+    await setContacts();
+  }
+
+
+
+
+
+
+
+
+
+
   //from here is relevent
 
   let input = useRef()
@@ -66,7 +118,6 @@ async function sendMessageToDB(message,token,contactName) {
     var url = 'https://localhost:7271/api/contacts/' + contactName + '/' + 'messages'
     const response = await fetch(url, requestOptions);
     return response.status;
-
 }
 
 async function getServerContact(contact) {
@@ -100,7 +151,7 @@ async function sendMessageToDBofContact(message) {
 }
 
 async function getAllContactMessages(){
-
+  console.log("in")
   const requestOptions = {
       method: 'GET',
       headers: { 'Authorization': 'Bearer ' + props.token },
@@ -108,6 +159,7 @@ async function getAllContactMessages(){
     var url = 'https://localhost:7271/api/contacts/' + props.chatUser + '/' + 'messages'
     const response = await fetch(url, requestOptions);
     const messageList = await response.json();
+    console.log(messageList)
     return messageList;
 }
 
@@ -128,7 +180,9 @@ async function setContacts() {
 const setNewMessage = async function (type, mes) {
     const stat = await sendMessageToDB({content: mes}, props.token, props.chatUser);
     if(stat < 300){
-      const stat2 = await sendMessageToDBofContact({from: props.myUser ,to: props.chatUser ,content: mes})
+      var transfer = {from: props.myUser ,to: props.chatUser ,content: mes}
+      const stat2 = await sendMessageToDBofContact(transfer)
+      sendMessageSignalIR(transfer)
     }
 
     // let index1 = props.arrContact.findIndex(x => (x.userName === props.chatUser))
