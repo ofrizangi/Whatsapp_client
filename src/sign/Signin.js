@@ -92,6 +92,7 @@ function Signin() {
                             <Link to='/register'>register</Link>
                         </div>
                     </form>
+                    <a href='https://localhost:7038'> go to rating page </a>
                 </div>
                 
         </div>
