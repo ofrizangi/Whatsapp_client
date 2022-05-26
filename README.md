@@ -15,5 +15,5 @@ This app uses react, react-boorstrap, react-router-dom and signalR. In order to 
 3. run the server - https://github.com/SivanJirad/WhatsappProject
 4. run the command - npm start
 
-# Important To Read:
+## Important To Read:
 Whenever you register you must enter a password with a least 8 characters, at least one number and a letter.
