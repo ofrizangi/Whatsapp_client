@@ -1,6 +1,5 @@
 import '../../chat.css'
 import { React, useEffect, useRef } from 'react';
-import { users } from '../../../Users';
 
 
 
@@ -41,9 +40,6 @@ async function inviteContact(inivitation, token, server) {
 
 function AddContact(props) {
 
-
-
-
     let name = useRef();
     let nickName = useRef();
     let server = useRef();
@@ -56,9 +52,14 @@ function AddContact(props) {
             headers: { 'Authorization': 'Bearer ' + props.token},
         };
         const response = await fetch('https://localhost:7271/api/contacts', requestOptions);
-        const list = await response.json();
-        console.log(list)
-        props.setContactsList(list);
+        if(response.status < 300){
+            const list = await response.json();
+            console.log(list)
+            props.setContactsList(list);
+        }
+        else{
+            alert("A problem occurred while getting contacts")
+        }
     }
 
 
@@ -68,66 +69,16 @@ function AddContact(props) {
         let stat = await sendContactToDB({id: name.current.value, name: nickName.current.value, server: server.current.value}, props.token);
         if(stat < 300){
             const statServer2 =  await inviteContact({from: props.userName , to: name.current.value, server: server.current.value}, props.token, server.current.value);
-
-
-
-            // props.setContactsList((prev)=>{
-            //     if(prev == []){
-            //         return [{id: name.current.value, name: nickName.current.value, server: server.current.value , last: null, lastdate:null}]
-            //     }
-            //     else{
-            //         return prev.concat({id: name.current.value, name: nickName.current.value, server: server.current.value , last: null, lastdate:null})
-            //     }
-            // })
-
             await getContacts();
-
         }
         else{
             alert("not a valid contact")
-
         }
 
-
-
-         let contName = name.current.value;
          name.current.value = ''
          nickName.current.value = ''
          server.current.value = ''
-
-
-        //  if (stat === "true")
-        //     console.log("adeed")
-        // else
-        //     console.log("This user is not valid")
-
-
-
-        let indexOfUserInArrey= users.findIndex(x => (x.userName === contName))
-
-        // if (indexOfUserInArrey === -1) {
-        //     alert("This user does nor exist!")
-        // }
-        // else if( props.existContacts.findIndex(x => (x.userName === contName)) !== -1)
-        // {
-        //     alert("You can't add someone who is allready your contact")
-        // }
-        // else if(contName===props.userName)
-        // {
-        //     alert("it is You :(")
-        // }
-        
-    
-        // else{
-        // props.setContact((prev)=>{
-        //     return prev.concat({userName: contName, nickName:users[indexOfUserInArrey].nickName , image: users[indexOfUserInArrey].image, messages:[]})
-        // })
-
-        // users[props.indexOfMe].contacts = [...props.existContacts,  {userName: contName, nickName:users[indexOfUserInArrey].nickName, image: users[indexOfUserInArrey].image ,messages:[]}]
-
-
     }
-    
  
     return (
 

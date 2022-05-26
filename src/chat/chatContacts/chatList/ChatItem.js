@@ -4,6 +4,24 @@ import avatar from './avatar.png'
 
 function ChatItem(props) {
 
+
+    // useEffect(() => {
+    //     async function setMessage(){
+    //         const messages = await getAllContactMessages();
+    //         if(messages === false){
+    //             alert("A problem occurred while getting the messages")
+    //         }
+    //         else{
+    //             console.log(messages)
+    //             props.setMessages(messages);
+    //         }
+    //     }
+    //     setMessage()
+        
+    //   }, [props.contact]);
+
+
+
     const [date, setDate] = useState(new Date())
 
     useEffect(() => {
@@ -14,24 +32,23 @@ function ChatItem(props) {
 
 
     async function goToMethod(){
-
-        // editContact({name: "vbvnbvnbvnbv" , server: "localhost:7271"});
-        // deleteContact();
         const contact = await showContact();
-        // console.log(cont)
-        if(contact != false){
-            props.setUser({userName: contact.id ,nickName:contact.name, image: avatar});
+        if(contact === false){
+            alert("A problem occurred while getting the contact")
         }
-        
+        else{
+            await props.setUser({userName: contact.id ,nickName:contact.name, image: avatar});
+        }
+        console.log("cont" ,props.contact.id)
         const messages = await getAllContactMessages();
-        console.log(messages)
-        // let newMessages = []
-        // messages.map((item)=>{
-        //     newMessages.concat({ content: item.content , created: item.created, sent: item.sent})
-        // })
-        // console.log(newMessages)
-        props.setMessages(messages);
 
+        if(messages === false){
+            alert("A problem occurred while getting the messages")
+        }
+        else{
+            console.log(messages)
+            props.setMessages(messages);
+        }
     }
 
 
@@ -43,9 +60,13 @@ function ChatItem(props) {
           };
           var url = 'https://localhost:7271/api/contacts/' + props.contact.id + '/' + 'messages'
           const response = await fetch(url, requestOptions);
-          const messageList = await response.json();
-          return messageList;
+          if(response.status < 300){
+            const messageList = await response.json();
+            return messageList;
+          }
+          return false;
     }
+
 
     async function showContact(){
         // console.log(props.token)
@@ -60,7 +81,6 @@ function ChatItem(props) {
             return stat;
         }
         return false;
-         
     }
 
 
@@ -104,39 +124,31 @@ function ChatItem(props) {
     DAY = HOUR * 24,
     MONTH = DAY * 30,
     YEAR = DAY * 365;
+    
 
-    function convertFromStringToDate(responseDate) {
+    function setTime(responseDate){
         let dateComponents = responseDate.split(' ');
         let datePieces = dateComponents[0].split("/");
         let timePieces = dateComponents[1].split(":");
-        let date = new Date(datePieces[2], (datePieces[1] - 1), datePieces[0],
+        let dateLastMessage = new Date(datePieces[2], (datePieces[1] - 1), datePieces[0],
                              timePieces[0], timePieces[1], timePieces[2]);
-        console.log(date);
-        getTimeAgoString(date);
+        return dateLastMessage;
     }
-    
+
 
 
 const getTimeAgoString = (responseDate) => {
-    let dateComponents = responseDate.split(' ');
-    let datePieces = dateComponents[0].split("/");
-    let timePieces = dateComponents[1].split(":");
-    let dateLastMessage = new Date(datePieces[2], (datePieces[1] - 1), datePieces[0],
-                         timePieces[0], timePieces[1], timePieces[2]);
-    console.log(date);
-    const differance = date - dateLastMessage,
-        getTimeString = (value, unit) => {
-            const round = Math.round(differance / value);
-            return `${round} ${unit}${round > 1
-                ? 's'
-                : ''} ago`;
+
+    if(responseDate == undefined){
+       responseDate =setTime(responseDate)
+    }
+    const differance = date- responseDate;
+    const getTimeString = (value, unit) => {
+        const round = Math.round(differance / value);
+        return `${round} ${unit}${round > 1
+            ? 's'
+            : ''} ago`;
         };
-        // console.log("hiii")
-        // console.log(new Date (new Date(props.contact.lastdate).toDateString()))
-        // console.log( Date.parse(props.contact.lastdate))
-        // console.log("hiii")
-        // console.log(new Date(props.contact.lastdate))
-        // console.log(props.contact.lastdate)
     if (differance < MINUTE) {
         return 'now';
     }
@@ -164,21 +176,13 @@ const getTimeAgoString = (responseDate) => {
             <span className="m-2 ms-3 nameContact" >
                 <div className='chat-name'>{props.contact.name}</div>
                 <div className='last-message'>
-                {/* {props.contact.messages.length !== 0 && props.contact.messages[props.contact.messages.length-1].type === 'text' && <div>{ props.contact.messages[props.contact.messages.length-1].message}</div>} 
-                {props.contact.messages.length !== 0 && props.contact.messages[props.contact.messages.length-1].type === 'image' && <div> <i className="bi bi-image"></i> image</div>}
-                {props.contact.messages.length !== 0 && props.contact.messages[props.contact.messages.length-1].type === 'video' && <div> <i className="bi bi-camera-video"></i> video</div>}
-                {props.contact.messages.length !== 0 && props.contact.messages[props.contact.messages.length-1].type === 'audio' && <div> <i className="bi bi-mic"></i> audio</div>}
-                {props.contact.messages.length !== 0 && props.contact.messages[props.contact.messages.length-1].type === 'file' && <div> <i className="bi bi-filetype-pdf"></i> file</div>} */}
-
                 {props.contact.last != null && <div>{props.contact.last}</div>}
                 </div>
             
             </span> 
             
-            {/* <span className='time-ago'> {props.contact.messages.length !== 0  && getTimeAgoString(props.contact.messages[props.contact.messages.length-1].date)}   </span> */}
+            <span className='time-ago'> {props.contact.lastdate != null  && getTimeAgoString(new Date(props.contact.lastdate))}   </span>
 
-            <span className='time-ago'> {props.contact.lastdate != null  && getTimeAgoString(props.contact.lastdate)}   </span>
-    
 
             </button>
 

@@ -11,38 +11,23 @@ useEffect(() => {
             headers: { 'Authorization': 'Bearer ' + props.token},
         };
         const response = await fetch('https://localhost:7271/api/contacts', requestOptions);
-        const list = await response.json();
-        console.log(list)
-        props.setContactsList(list);
+        if(response.status < 300){
+            const list = await response.json();
+            console.log(list)
+            props.setContactsList(list);
+        }
+        else{
+            alert("A problem occurred while getting messages")
+        }
+
     }
     getContacts();
   }, []);
 
 
 
-// const showList = function () {
-//     var list = getContacts();
-    
-//     return <div className="list-group list-group-flush">
-//     { 
-//     list.map((item)=>
-//     console.log(item.id))
-//     //<ChatItem key={item.id}/>)
-//     }
-//     </div> 
-
-
-//     }
     return(
         <>
-
-
-        {/* <div className="list-group list-group-flush">
-            { 
-            props.contacts.map((item)=>
-            <ChatItem key={item.userName} contact={item} setUser={props.setUser} setMessages = {props.setMessages} token={props.token}/>)
-            }
-        </div>  */}
 
 
         <div className="list-group list-group-flush">

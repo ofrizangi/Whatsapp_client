@@ -68,7 +68,7 @@ function Chat() {
       </div>
       <div>   
 
-        {userChatPrassed !== null && <SendMessage setMessage={setMessage} myUser={userName} chatUser={userChatPrassed.userName} token={token} setContactsList={setContactsList}/>}
+        {userChatPrassed !== null && <SendMessage setMessage={setMessage} myUser={userName} chatUser={userChatPrassed} token={token} setContactsList={setContactsList}/>}
         </div>
         </div>
       </div>
