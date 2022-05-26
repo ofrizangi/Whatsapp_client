@@ -7,7 +7,7 @@ This app uses react, react-boorstrap, react-router-dom and signalR. In order to 
 1. npm install
 2. npm install react-router-dom
 3. npm install react-bootstrap
-4. npm install @microsoft/signalr@next
+4. npm install @microsoft/signalr
 
 ## How To Run?
 1. pull all files from git
