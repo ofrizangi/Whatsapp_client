@@ -3,10 +3,11 @@ The client side of a message app allowing you to send messages to other contacts
 Developed by Sivan Jhirad & Ofri Zangi.
 
 ## Set Up:
-This app uses react, react-boorstrap and react-router-dom. In order to run this app you must first install the packages using the commands:
+This app uses react, react-boorstrap, react-router-dom and signalR. In order to run this app you must first install the packages using the commands:
 1. npm install
-2. npm install react-router
+2. npm install react-router-dom
 3. npm install react-bootstrap
+4. npm install @microsoft/signalr@next
 
 ## How To Run?
 1. pull all files from git
