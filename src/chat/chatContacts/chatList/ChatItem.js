@@ -4,24 +4,6 @@ import avatar from './avatar.png'
 
 function ChatItem(props) {
 
-
-    // useEffect(() => {
-    //     async function setMessage(){
-    //         const messages = await getAllContactMessages();
-    //         if(messages === false){
-    //             alert("A problem occurred while getting the messages")
-    //         }
-    //         else{
-    //             console.log(messages)
-    //             props.setMessages(messages);
-    //         }
-    //     }
-    //     setMessage()
-        
-    //   }, [props.contact]);
-
-
-
     const [date, setDate] = useState(new Date())
 
     useEffect(() => {
@@ -39,14 +21,12 @@ function ChatItem(props) {
         else{
             await props.setUser({userName: contact.id ,nickName:contact.name, image: avatar});
         }
-        console.log("cont" ,props.contact.id)
         const messages = await getAllContactMessages();
 
         if(messages === false){
             alert("A problem occurred while getting the messages")
         }
         else{
-            console.log(messages)
             props.setMessages(messages);
         }
     }
@@ -69,7 +49,6 @@ function ChatItem(props) {
 
 
     async function showContact(){
-        // console.log(props.token)
         const requestOptions = {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + props.token},
@@ -96,13 +75,10 @@ function ChatItem(props) {
 
         // status 200 if succeed and 400 oterwise
         const stat = response.status;
-        console.log(stat)
     }
 
 
     async function editContact(editdetails){
-        console.log(JSON.stringify(editdetails))
-
         const requestOptions = {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json',
@@ -114,7 +90,6 @@ function ChatItem(props) {
 
         // status 200 if succeed and 400 oterwise
         const stat = response.status;
-        console.log(stat)
     }
 
 
@@ -137,10 +112,10 @@ function ChatItem(props) {
 
 
 
-const getTimeAgoString = (responseDate) => {
-
-    if(responseDate == undefined){
-       responseDate =setTime(responseDate)
+const getTimeAgoString = () => {
+    var responseDate = new Date(props.contact.lastdate)
+    if(isNaN(responseDate)){
+        responseDate =setTime(props.contact.lastdate)
     }
     const differance = date- responseDate;
     const getTimeString = (value, unit) => {
@@ -169,7 +144,6 @@ const getTimeAgoString = (responseDate) => {
 
     return (
         
-      
             <button type="button" className="list-group-item list-group-item-action d-flex align-items-center" onClick={goToMethod}>
             <img src={avatar} alt="Avatar" className="avatar"></img>
             
@@ -181,7 +155,7 @@ const getTimeAgoString = (responseDate) => {
             
             </span> 
             
-            <span className='time-ago'> {props.contact.lastdate != null  && getTimeAgoString(new Date(props.contact.lastdate))}   </span>
+            <span className='time-ago'> {props.contact.lastdate != null  && getTimeAgoString()}   </span>
 
 
             </button>

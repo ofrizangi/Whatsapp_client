@@ -1,11 +1,10 @@
 import ChatItem from "./ChatItem";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 function ChatList(props){
 
 useEffect(() => {
     async function getContacts() {
-        console.log(props.token)
         const requestOptions = {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + props.token},
@@ -13,7 +12,6 @@ useEffect(() => {
         const response = await fetch('https://localhost:7271/api/contacts', requestOptions);
         if(response.status < 300){
             const list = await response.json();
-            console.log(list)
             props.setContactsList(list);
         }
         else{
@@ -28,8 +26,6 @@ useEffect(() => {
 
     return(
         <>
-
-
         <div className="list-group list-group-flush">
             { 
             props.contactsList.map((item)=>

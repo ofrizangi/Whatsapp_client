@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { users } from '../Users';
 import "./register.css";
 import logo from '../wenLogo.jpg'
 import "../project.css";
@@ -24,7 +23,6 @@ function Register() {
         };
         const response = await fetch('https://localhost:7271/api/User/Register', requestOptions);
         const token = await response.text();
-        console.log(token);
         return token;
     }
     
@@ -63,15 +61,10 @@ function Register() {
             else 
                 stat = await postDataInDB({ userName: userName, password: password, nickName: nickName,  image: image, contacts: [] });
 
-
-
-            console.log(stat)
             if (stat === "false" || userName === '') {
                 alert('This user name is not valid or already exists, chose a different one');
-                //console.log('false')
             }
             else{
-                console.log(stat)
                 navigate('/chats',  { state:{ token: stat, userName:userName}});
             }
         }

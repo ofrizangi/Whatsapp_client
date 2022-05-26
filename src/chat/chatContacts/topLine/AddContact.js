@@ -1,8 +1,5 @@
 import '../../chat.css'
-import { React, useEffect, useRef } from 'react';
-
-
-
+import { React, useRef } from 'react';
 
 
 async function sendContactToDB(contact, token) {
@@ -21,22 +18,6 @@ async function sendContactToDB(contact, token) {
 
 
 
-async function inviteContact(inivitation, token, server) {
-
-    const requestOptions = {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token  },
-        body: JSON.stringify(inivitation),
-    };
-    const response = await fetch('https://' + server + '/api/invitations',  requestOptions);
-    const stat = response.status;
-    return stat;
-}
-
-
-
-
 
 function AddContact(props) {
 
@@ -44,9 +25,39 @@ function AddContact(props) {
     let nickName = useRef();
     let server = useRef();
 
+    async function deleteContact(contact){
+
+        const requestOptions = {
+            method: 'DELETE',
+            headers: { 'Authorization': 'Bearer ' + props.token},
+        };
+        const url = 'https://localhost:7271/api/contacts/' + contact;
+        const response = await fetch(url, requestOptions);
+        // status 200 if succeed and 400 oterwise
+        const stat = response.status;
+        return stat;
+    }
+
+    async function inviteContact(inivitation, token, server) {
+
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token  },
+            body: JSON.stringify(inivitation),
+        };
+        const response = await fetch('https://' + server + '/api/invitations',  requestOptions)
+        .catch(error =>{
+            const stat = deleteContact(name.current.value);
+            alert("not a valid server")
+            return false;
+        }) 
+        const stat = response.status;
+        return stat;
+    }
+
 
     async function getContacts() {
-        console.log(props.token)
         const requestOptions = {
             method: 'GET',
             headers: { 'Authorization': 'Bearer ' + props.token},
@@ -54,7 +65,6 @@ function AddContact(props) {
         const response = await fetch('https://localhost:7271/api/contacts', requestOptions);
         if(response.status < 300){
             const list = await response.json();
-            console.log(list)
             props.setContactsList(list);
         }
         else{
@@ -69,7 +79,14 @@ function AddContact(props) {
         let stat = await sendContactToDB({id: name.current.value, name: nickName.current.value, server: server.current.value}, props.token);
         if(stat < 300){
             const statServer2 =  await inviteContact({from: props.userName , to: name.current.value, server: server.current.value}, props.token, server.current.value);
-            await getContacts();
+            
+            if(statServer2 !== false && statServer2 >= 300){
+                const stat = deleteContact(name.current.value);
+                alert("A problem occurred while adding the contact")
+            }
+            else if(statServer2 !== false){
+                await getContacts();
+            }
         }
         else{
             alert("not a valid contact")

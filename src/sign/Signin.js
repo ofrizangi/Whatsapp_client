@@ -1,13 +1,10 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { React, useState, useEffect } from 'react';
-import {  users } from '../Users';
 import logo from '../wenLogo.jpg'
 import './sign.css'
 import '../project.css'
 
 function Signin() {
-
-
 
     const [userName, setUserName] = useState("");
     const [password, setPassword] = useState("");
@@ -24,7 +21,6 @@ function Signin() {
         const response = await fetch('https://localhost:7271/api/User/Login', requestOptions);
         
         const token = await response.text();
-        // var token = awiat(JSON.parse(response)).access_token; 
         return token;
     }
 
@@ -41,28 +37,6 @@ function Signin() {
             navigate('/chats', { state:{token:token, userName: userName}});
         }
 
-             // delete me!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // console.log(token);
-        // const requestOptions = {
-        //     method: 'GET',
-        //     headers: { 'Authorization': 'Bearer ' + token },
-        // };
-        // fetch('https://localhost:7271/api/User/Get', requestOptions)
-        // .then(response => response.text())
-        // .then(data => console.log(data));
-         
-     
-        // let transfer = false;
-
-        // for (let i = 0; i < users.length; i++) {
-        //     if (users[i].userName === userName && users[i].password === password) {
-
-        //         navigate('/chats', { state:{index:i, token:token, userName:userName}});
-        //         transfer = true
-        //     }
-        // }
-        // if (!transfer)
-        //     alert('user name or password are incorrect')
     }
 
 
